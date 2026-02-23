@@ -1,0 +1,182 @@
+
+import pandas as pd
+
+def process_students(file_path):
+    df = pd.read_csv(file_path, sep=';', skipinitialspace=True)
+    df.columns = [col.strip() for col in df.columns]
+    df = df.sort_values(by='Nombre')
+    return df
+
+def format_groups(df, group_size=8):
+    output = []
+    for i in range(0, len(df), group_size):
+        group_df = df.iloc[i : i + group_size]
+        output.append(f"GRUPO {(i // group_size) + 1}")
+        output.append(f"{'Nombre':<20} | {'Apellidos':<20} | {'Lunes':<10} | {'Jueves':<10}")
+        output.append("-" * 70)
+        for _, row in group_df.iterrows():
+            output.append(f"{str(row['Nombre']):<20} | {str(row['Apellido(s)']):<20} | {'__________':<10} | {'__________':<10}")
+        output.append("\n")
+    return "\n".join(output)
+
+if __name__ == '__main__':
+    df = process_students('pokemons_participantes_curso.csv')
+    sheet = format_groups(df)
+    with open('hoja_firmas.txt', 'w') as f:
+        f.write(sheet)
+    print("Hoja de firmas generada en 'hoja_firmas.txt'")
+
+
+import unittest
+import pandas as pd
+import os
+from hoja_firmas import process_students, format_groups
+
+class TestSignatureSheet(unittest.TestCase):
+    def setUp(self):
+        # Create a mock CSV
+        self.test_csv = 'test_students.csv'
+        with open(self.test_csv, 'w') as f:
+            f.write("Nombre; Apellido(s)\nZeta; Last\nAlpha; First\nBeta; Second")
+            
+    def tearDown(self):
+        if os.path.exists(self.test_csv):
+            os.remove(self.test_csv)
+
+    def test_sorting(self):
+        df = process_students(self.test_csv)
+        self.assertEqual(df.iloc[0]['Nombre'], 'Alpha')
+        self.assertEqual(df.iloc[-1]['Nombre'], 'Zeta')
+
+    def test_grouping(self):
+        df = process_students(self.test_csv)
+        sheet = format_groups(df, group_size=2)
+        # Should have 2 groups (3 students / size 2)
+        self.assertIn("GRUPO 1", sheet)
+        self.assertIn("GRUPO 2", sheet)
+
+if __name__ == '__main__':
+    unittest.main()
+
+--- GRUPO 1 ---
+Nombre               | Apellidos            | Lunes      | Jueves    
+----------------------------------------------------------------------
+Aerodactyl           | Sicinius             | __________ | __________
+Articuno             | Verginius            | __________ | __________
+Bulbasaur            | Claudius             | __________ | __________
+Chansey              | Quinctius            | __________ | __________
+Charizard            | Julius               | __________ | __________
+Chikorita            | Geganius             | __________ | __________
+Chinchou             | Numicius             | __________ | __________
+Cleffa               | Pompeius             | __________ | __________
+
+======================================================================
+
+--- GRUPO 2 ---
+Nombre               | Apellidos            | Lunes      | Jueves    
+----------------------------------------------------------------------
+Cubone               | Aemilius             | __________ | __________
+Cyndaquil            | Hortensius           | __________ | __________
+Ditto                | Lartius              | __________ | __________
+Doduo                | Lucius               | __________ | __________
+Dratini              | Acilius              | __________ | __________
+Drowzee              | Appius               | __________ | __________
+Eevee                | Lucretius            | __________ | __________
+Electabuzz           | Pinarius             | __________ | __________
+
+======================================================================
+
+--- GRUPO 3 ---
+Nombre               | Apellidos            | Lunes      | Jueves    
+----------------------------------------------------------------------
+Exeggcute            | Vibius               | __________ | __________
+Gastly               | Quintus              | __________ | __________
+Geodude              | Antonius             | __________ | __________
+Goldeen              | Caecilius            | __________ | __________
+Hitmonchan           | Livius               | __________ | __________
+Hitmonlee            | Furius               | __________ | __________
+Hoothoot             | Mamilius             | __________ | __________
+Horsea               | Veturius             | __________ | __________
+
+======================================================================
+
+--- GRUPO 4 ---
+Nombre               | Apellidos            | Lunes      | Jueves    
+----------------------------------------------------------------------
+Igglybuff            | Popilius             | __________ | __________
+Jigglypuff           | Valerius             | __________ | __________
+Jynx                 | Minucius             | __________ | __________
+Kabuto               | Sergius              | __________ | __________
+Koffing              | Naevius              | __________ | __________
+Krabby               | Decimus              | __________ | __________
+Lapras               | Hostilius            | __________ | __________
+Ledyba               | Metilius             | __________ | __________
+
+======================================================================
+
+--- GRUPO 5 ---
+Nombre               | Apellidos            | Lunes      | Jueves    
+----------------------------------------------------------------------
+Machop               | Marcus               | __________ | __________
+Magikarp             | Foslius              | __________ | __________
+Magmar               | Pomponius            | __________ | __________
+Magnemite            | Gaius                | __________ | __________
+Mareep               | Aurelius             | __________ | __________
+Marill               | Julius               | __________ | __________
+Meowth               | Cornelius            | __________ | __________
+Mew                  | Fabricius            | __________ | __________
+
+======================================================================
+
+--- GRUPO 6 ---
+Nombre               | Apellidos            | Lunes      | Jueves    
+----------------------------------------------------------------------
+Mewtwo               | Curtius              | __________ | __________
+Moltres              | Volumnius            | __________ | __________
+Mr. Mime             | Junius               | __________ | __________
+Natu                 | Rutilius             | __________ | __________
+Omanyte              | Oppius               | __________ | __________
+Onix                 | Sextus               | __________ | __________
+Pichu                | Petronius            | __________ | __________
+Pikachu              | Aurelius             | __________ | __________
+
+======================================================================
+
+--- GRUPO 7 ---
+Nombre               | Apellidos            | Lunes      | Jueves    
+----------------------------------------------------------------------
+Pinsir               | Sulpicius            | __________ | __________
+Politoed             | Flavius              | __________ | __________
+Ponyta               | Octavius             | __________ | __________
+Porygon              | Menenius             | __________ | __________
+Psyduck              | Fabius               | __________ | __________
+Rhyhorn              | Papirius             | __________ | __________
+Scyther              | Manlius              | __________ | __________
+Seel                 | Publius              | __________ | __________
+
+======================================================================
+
+--- GRUPO 8 ---
+Nombre               | Apellidos            | Lunes      | Jueves    
+----------------------------------------------------------------------
+Sentret              | Licinius             | __________ | __________
+Slowpoke             | Tiberius             | __________ | __________
+Snorlax              | Tullius              | __________ | __________
+Spinarak             | Mucius               | __________ | __________
+Squirtle             | Flavius              | __________ | __________
+Staryu               | Domitius             | __________ | __________
+Sudowoodo            | Claudius             | __________ | __________
+Tangela              | Sempronius           | __________ | __________
+
+======================================================================
+
+--- GRUPO 9 ---
+Nombre               | Apellidos            | Lunes      | Jueves    
+----------------------------------------------------------------------
+Tauros               | Aebutius             | __________ | __________
+Togepi               | Postumius            | __________ | __________
+Totodile             | Iulius               | __________ | __________
+Voltorb              | Numerius             | __________ | __________
+Zapdos               | Vitellius            | __________ | __________
+
+======================================================================

@@ -1,3 +1,6 @@
+Tarea 1 . Tardé 5 minutos
+Tarea 2. Tardé 8 minutos.
+Tarea 3. Tardé 5 minutos
 1.Esta tarea se organiza de la siguiente forma:
 
 hoja_firmas.py: El script principal que procesa los datos y genera la hoja.
